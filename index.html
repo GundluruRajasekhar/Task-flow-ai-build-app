@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TaskFlow AI — AI-Powered Project & Task Management Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF0F3;
+    --panel: #FFFFFF;
+    --ink: #171A21;
+    --ink-soft: #565C6B;
+    --line: #DBDFE6;
+    --accent: #3A4CE0;
+    --accent-ink: #FFFFFF;
+    --amber: #E8A23C;
+    --green: #2E9E6D;
+    --red: #D9534F;
+    --shadow: 0 1px 2px rgba(23,26,33,0.06), 0 8px 24px rgba(23,26,33,0.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161C;
+      --panel: #1C1F27;
+      --ink: #EDEFF3;
+      --ink-soft: #9AA0AF;
+      --line: #2C303B;
+      --accent: #6C7CFF;
+      --accent-ink: #10121A;
+      --amber: #F0B15A;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #14161C;
+    --panel: #1C1F27;
+    --ink: #EDEFF3;
+    --ink-soft: #9AA0AF;
+    --line: #2C303B;
+    --accent: #6C7CFF;
+    --accent-ink: #10121A;
+    --amber: #F0B15A;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100%;
+  }
+
+  h1, h2, h3, .display {
+    font-family: 'Space Grotesk', 'Inter', sans-serif;
+    letter-spacing: -0.01em;
+  }
+
+  .wrap {
+    width: 100%;
+    max-width: 980px;
+    padding: 48px 24px 140px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand .mark {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent-ink);
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .brand span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .sub-label {
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  .hero h1 {
+    font-size: clamp(34px, 5.5vw, 54px);
+    line-height: 1.05;
+    margin: 0 0 18px;
+    max-width: 12ch;
+  }
+  .hero p.lede {
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 46ch;
+    margin: 0 0 28px;
+  }
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 22px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: var(--shadow);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .hint {
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+
+  /* ---------- Stage (browser-chrome mockup) ---------- */
+  .stage-outer {
+    position: relative;
+  }
+  .stage {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .chrome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .dots { display: flex; gap: 6px; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); display: block; }
+  .chrome .url {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 6px 12px;
+    text-align: center;
+  }
+  .screen {
+    min-height: 420px;
+    padding: 28px;
+    position: relative;
+  }
+  .scene-panel {
+    display: none;
+    animation: rise .5s ease both;
+  }
+  .scene-panel.active { display: block; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scene-panel { animation: none !important; }
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .screen h3 {
+    font-size: 22px;
+    margin: 0 0 22px;
+  }
+
+  /* Auth scene */
+  .authbox {
+    max-width: 320px;
+    margin: 10px auto 0;
+    text-align: left;
+  }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; }
+  .field .input {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .authbox .btn { width: 100%; justify-content: center; margin-top: 6px; }
+
+  /* Dashboard scene */
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .stat-card .num { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 600; }
+  .stat-card .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .activity { border: 1px solid var(--line); border-radius: 12px; padding: 8px 16px; }
+  .activity-row { display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px; border-bottom: 1px solid var(--line); color: var(--ink-soft); }
+  .activity-row:last-child { border-bottom: none; }
+  .activity-row b { color: var(--ink); font-weight: 500; }
+
+  /* Project scene */
+  .proj-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .proj-card { border: 1px solid var(--line); border-radius: 12px; padding: 16px; text-align: left; }
+  .proj-card .name { font-weight: 600; margin-bottom: 6px; }
+  .proj-card .desc { font-size: 12px; color: var(--ink-soft); margin-bottom: 12px; }
+  .bar-track { height: 6px; border-radius: 4px; background: var(--bg); overflow: hidden; }
+  .bar-fill { height: 100%; background: var(--accent); border-radius: 4px; }
+  .proj-card .pct { font-size: 11px; color: var(--ink-soft); margin-top: 6px; }
+
+  /* Task scene */
+  .kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; text-align: left; }
+  .col-head { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; }
+  .task-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    background: var(--panel);
+  }
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+  }
+  .tag-high { background: rgba(217,83,79,0.14); color: var(--red); }
+  .tag-med { background: rgba(232,162,60,0.16); color: var(--amber); }
+  .tag-low { background: rgba(46,158,109,0.14); color: var(--green); }
+  .task-meta { color: var(--ink-soft); font-size: 11px; margin-top: 4px; }
+  .searchbar {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .searchbar .input { flex: 1; text-align: left; }
+
+  /* AI scene */
+  .ai-box { max-width: 460px; margin: 0 auto; text-align: left; }
+  .ai-input {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    min-height: 24px;
+    margin-bottom: 18px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .ai-input .cursor { display: inline-block; width: 2px; height: 14px; background: var(--accent); vertical-align: middle; animation: blink 1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  .ai-result {
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .ai-result.show { opacity: 1; transform: translateY(0); }
+  .ai-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .ai-badge .sparkle { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .ai-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12px; }
+  .ai-fields div span { display: block; color: var(--ink-soft); font-size: 10px; margin-bottom: 2px; }
+
+  /* Outro */
+  .outro { text-align: center; padding: 20px 0; }
+  .outro h3 { font-size: 24px; margin-bottom: 8px; }
+  .outro p { color: var(--ink-soft); font-size: 14px; }
+
+  /* ---------- Caption / controls ---------- */
+  .caption {
+    margin-top: 22px;
+    min-height: 48px;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 70ch;
+  }
+  .caption b { color: var(--ink); font-weight: 500; }
+
+  .controls {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    justify-content: center;
+    padding: 14px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, var(--bg) 60%, transparent);
+    pointer-events: none;
+  }
+  .controls-inner {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 8px 10px 8px 16px;
+    box-shadow: var(--shadow);
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .ctrl-btn {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg);
+    color: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .ctrl-btn.play { width: 40px; height: 40px; background: var(--accent); color: var(--accent-ink); }
+  .ctrl-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .dotnav { display: flex; gap: 7px; padding: 0 4px; }
+  .dotnav button {
+    width: 8px; height: 8px; border-radius: 50%;
+    border: none; background: var(--line); cursor: pointer; padding: 0;
+    flex-shrink: 0;
+  }
+  .dotnav button.on { background: var(--accent); width: 20px; border-radius: 4px; }
+  .scene-count { font-size: 12px; color: var(--ink-soft); white-space: nowrap; padding-right: 4px; }
+
+  .voice-note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="mark">TF</div>
+      <span>TaskFlow AI</span>
+    </div>
+    <div class="sub-label">Narrated product walkthrough — Innovation Hacks, Task 4</div>
+  </header>
+
+  <section class="hero">
+    <h1>An AI-powered project &amp; task platform, narrated in one pass.</h1>
+    <p class="lede">Press play and this page reads its own demo out loud, screen by screen — authentication, the dashboard, projects, tasks, and the AI feature that ties it together. Turn your speakers on, then record your screen to capture it as your submission video.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary" id="mainPlayBtn">▶ Play narrated demo</button>
+      <button class="btn btn-ghost" id="restartBtn">Restart</button>
+    </div>
+  </section>
+
+  <div class="stage-outer">
+    <div class="stage">
+      <div class="chrome">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div class="url" id="urlBar">taskflow.app/login</div>
+      </div>
+      <div class="screen" id="screen">
+
+        <!-- Scene 0: Title -->
+        <div class="scene-panel" data-scene="0">
+          <div class="eyebrow">Welcome</div>
+          <h3>TaskFlow AI — Project &amp; Task Management</h3>
+          <p style="color:var(--ink-soft); font-size:14px; max-width:44ch;">A full-stack platform for planning projects, assigning work, and tracking progress — with an AI assistant built into the workflow. This walkthrough covers every core screen.</p>
+        </div>
+
+        <!-- Scene 1: Auth -->
+        <div class="scene-panel" data-scene="1">
+          <div class="eyebrow">Authentication</div>
+          <h3>Register, log in, stay protected</h3>
+          <div class="authbox">
+            <div class="field"><label>Email</label><div class="input">you@company.com</div></div>
+            <div class="field"><label>Password</label><div class="input">••••••••••</div></div>
+            <button class="btn btn-primary">Log in</button>
+          </div>
+        </div>
+
+        <!-- Scene 2: Dashboard -->
+        <div class="scene-panel" data-scene="2">
+          <div class="eyebrow">Dashboard</div>
+          <h3>Everything at a glance</h3>
+          <div class="stat-row">
+            <div class="stat-card"><div class="num">6</div><div class="lbl">Active projects</div></div>
+            <div class="stat-card"><div class="num">24</div><div class="lbl">Open tasks</div></div>
+            <div class="stat-card"><div class="num">11</div><div class="lbl">Completed this week</div></div>
+          </div>
+          <div class="activity">
+            <div class="activity-row"><span><b>Priya</b> moved "Fix login bug" to In Progress</span><span>2m ago</span></div>
+            <div class="activity-row"><span><b>Dev</b> created project "Mobile Revamp"</span><span>1h ago</span></div>
+            <div class="activity-row"><span><b>Sam</b> completed "Write API docs"</span><span>3h ago</span></div>
+          </div>
+        </div>
+
+        <!-- Scene 3: Projects -->
+        <div class="scene-panel" data-scene="3">
+          <div class="eyebrow">Project management</div>
+          <h3>Create, edit, and track every project</h3>
+          <div class="proj-grid">
+            <div class="proj-card">
+              <div class="name">Mobile Revamp</div>
+              <div class="desc">Redesign the iOS &amp; Android app</div>
+              <div class="bar-track"><div class="bar-fill" style="width:62%"></div></div>
+              <div class="pct">62% complete</div>
+            </div>
+            <div class="proj-card">
+              <div class="name">API v2 Migration</div>
+              <div class="desc">Move core services to the new API</div>
+              <div class="bar-track"><div class="bar-fill" style="width:34%"></div></div>
+              <div class="pct">34% complete</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 4: Tasks -->
+        <div class="scene-panel" data-scene="4">
+          <div class="eyebrow">Task management</div>
+          <h3>Assign, prioritize, filter, search</h3>
+          <div class="searchbar">
+            <div class="input">Search tasks…</div>
+            <div class="input" style="max-width:120px;">Priority ▾</div>
+          </div>
+          <div class="kanban">
+            <div>
+              <div class="col-head">TO DO</div>
+              <div class="task-card"><span class="tag tag-high">High</span><div>Fix login bug</div><div class="task-meta">Priya · Due Fri</div></div>
+            </div>
+            <div>
+              <div class="col-head">IN PROGRESS</div>
+              <div class="task-card"><span class="tag tag-med">Medium</span><div>Write API docs</div><div class="task-meta">Dev · Due Mon</div></div>
+            </div>
+            <div>
+              <div class="col-head">DONE</div>
+              <div class="task-card"><span class="tag tag-low">Low</span><div>Update favicon</div><div class="task-meta">Sam · Done</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 5: AI feature -->
+        <div class="scene-panel" data-scene="5">
+          <div class="eyebrow">AI feature</div>
+          <h3>Natural language task creation</h3>
+          <div class="ai-box">
+            <div class="ai-input" id="aiTyping">&nbsp;<span class="cursor"></span></div>
+            <div class="ai-result" id="aiResult">
+              <div class="ai-badge"><span class="sparkle"></span> Parsed by AI</div>
+              <div class="ai-fields">
+                <div><span>Title</span>Fix the login bug</div>
+                <div><span>Assignee</span>Priya</div>
+                <div><span>Due date</span>Friday</div>
+                <div><span>Priority</span>High</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scene 6: Outro -->
+        <div class="scene-panel" data-scene="6">
+          <div class="outro">
+            <h3>That's TaskFlow AI.</h3>
+            <p>Built for Innovation Hacks — Task 4.<br>Auth, dashboard, projects, tasks, and an AI assistant, in one platform.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="caption" id="caption"></div>
+    <div class="voice-note" id="voiceNote"></div>
+  </div>
+
+</div>
+
+<div class="controls">
+  <div class="controls-inner">
+    <button class="ctrl-btn" id="prevBtn" aria-label="Previous scene">‹</button>
+    <button class="ctrl-btn play" id="playBtn" aria-label="Play or pause">▶</button>
+    <button class="ctrl-btn" id="nextBtn" aria-label="Next scene">›</button>
+    <div class="dotnav" id="dotnav"></div>
+    <div class="scene-count" id="sceneCount">1 / 7</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var scenes = [
+    {
+      url: "taskflow.app",
+      narration: "Welcome to TaskFlow AI, a full stack project and task management platform. This walkthrough covers every core screen, from sign in to the AI feature that ties it together.",
+      caption: "Welcome to <b>TaskFlow AI</b> — a full-stack project and task management platform. This walkthrough covers every core screen."
+    },
+    {
+      url: "taskflow.app/login",
+      narration: "Every session starts with authentication. Users register, log in, and log out, and protected routes make sure only signed in users can reach the workspace.",
+      caption: "Every session starts with <b>authentication</b>. Users register, log in, and log out — protected routes keep the workspace private."
+    },
+    {
+      url: "taskflow.app/dashboard",
+      narration: "The dashboard gives a project overview, task statistics, progress tracking, and a feed of recent activity, so teams see where things stand the moment they log in.",
+      caption: "The <b>dashboard</b> shows a project overview, task statistics, progress tracking, and recent activity."
+    },
+    {
+      url: "taskflow.app/projects",
+      narration: "From project management, users can create, edit, delete, and view project details, with progress shown at a glance for every project.",
+      caption: "<b>Project management</b> covers create, edit, delete, and view — with progress visible at a glance."
+    },
+    {
+      url: "taskflow.app/tasks",
+      narration: "Task management lets users create tasks, assign them to teammates, update status, set priority and due dates, and search or filter the whole list.",
+      caption: "<b>Task management</b>: create, assign, update status, set priority and due dates, search and filter."
+    },
+    {
+      url: "taskflow.app/tasks/new",
+      narration: "Here's the AI feature. A user types a task in plain English, and the AI parses it straight into a structured task, with the assignee, due date, and priority filled in automatically.",
+      caption: "The <b>AI feature</b>: type a task in plain English, and it's parsed into a structured task automatically."
+    },
+    {
+      url: "taskflow.app",
+      narration: "That's TaskFlow AI. Authentication, a dashboard, project management, task management, and an AI assistant, brought together in one deployed platform, built for Innovation Hacks, task four.",
+      caption: "That's TaskFlow AI — built for <b>Innovation Hacks, Task 4</b>."
+    }
+  ];
+
+  var current = 0;
+  var playing = false;
+  var synth = window.speechSynthesis;
+  var supportsSpeech = !!synth;
+  var utter = null;
+  var fallbackTimer = null;
+  var aiTyped = false;
+
+  var screenEl = document.getElementById('screen');
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.scene-panel'));
+  var urlBar = document.getElementById('urlBar');
+  var captionEl = document.getElementById('caption');
+  var voiceNoteEl = document.getElementById('voiceNote');
+  var playBtn = document.getElementById('playBtn');
+  var mainPlayBtn = document.getElementById('mainPlayBtn');
+  var restartBtn = document.getElementById('restartBtn');
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var dotnav = document.getElementById('dotnav');
+  var sceneCount = document.getElementById('sceneCount');
+
+  scenes.forEach(function(_, i){
+    var d = document.createElement('button');
+    d.addEventListener('click', function(){ goTo(i, playing); });
+    dotnav.appendChild(d);
+  });
+
+  if (!supportsSpeech) {
+    voiceNoteEl.textContent = "This browser has no speech voices available — captions will still play on their own timing. Try Chrome for spoken narration.";
+  }
+
+  function renderDots(){
+    Array.prototype.forEach.call(dotnav.children, function(d, i){
+      d.className = i === current ? 'on' : '';
+    });
+    sceneCount.textContent = (current+1) + ' / ' + scenes.length;
+  }
+
+  function showScene(i){
+    panels.forEach(function(p){
+      p.classList.toggle('active', parseInt(p.getAttribute('data-scene'),10) === i);
+    });
+    urlBar.textContent = scenes[i].url;
+    captionEl.innerHTML = scenes[i].caption;
+    renderDots();
+    if (i === 5) { runAiTyping(); }
+  }
+
+  function runAiTyping(){
+    if (aiTyped) return;
+    aiTyped = true;
+    var target = "Fix the login bug for Priya, high priority, due Friday";
+    var typingEl = document.getElementById('aiTyping');
+    var resultEl = document.getElementById('aiResult');
+    var i = 0;
+    var iv = setInterval(function(){
+      i++;
+      typingEl.innerHTML = target.slice(0,i) + '<span class="cursor"></span>';
+      if (i >= target.length) {
+        clearInterval(iv);
+        setTimeout(function(){ resultEl.classList.add('show'); }, 350);
+      }
+    }, 28);
+  }
+
+  function speakScene(i){
+    clearTimers();
+    if (supportsSpeech) {
+      synth.cancel();
+      utter = new SpeechSynthesisUtterance(scenes[i].narration);
+      utter.rate = 0.98;
+      utter.pitch = 1;
+      var voices = synth.getVoices();
+      var preferred = voices.find(function(v){ return /en(-|_)(US|GB)/i.test(v.lang); });
+      if (preferred) utter.voice = preferred;
+      utter.onend = function(){
+        if (playing) advance();
+      };
+      synth.speak(utter);
+    } else {
+      var words = scenes[i].narration.split(' ').length;
+      var ms = Math.max(2200, words * 330);
+      fallbackTimer = setTimeout(function(){
+        if (playing) advance();
+      }, ms);
+    }
+  }
+
+  function clearTimers(){
+    if (fallbackTimer) { clearTimeout(fallbackTimer); fallbackTimer = null; }
+  }
+
+  function advance(){
+    if (current < scenes.length - 1) {
+      goTo(current + 1, true);
+    } else {
+      pause();
+    }
+  }
+
+  function goTo(i, keepPlaying){
+    current = i;
+    showScene(current);
+    if (keepPlaying) {
+      speakScene(current);
+    } else {
+      if (supportsSpeech) synth.cancel();
+      clearTimers();
+    }
+  }
+
+  function play(){
+    playing = true;
+    playBtn.textContent = '❚❚';
+    mainPlayBtn.textContent = '❚❚ Pause';
+    speakScene(current);
+  }
+
+  function pause(){
+    playing = false;
+    playBtn.textContent = '▶';
+    mainPlayBtn.textContent = '▶ Play narrated demo';
+    if (supportsSpeech) synth.cancel();
+    clearTimers();
+  }
+
+  function toggle(){
+    if (playing) { pause(); } else { play(); }
+  }
+
+  playBtn.addEventListener('click', toggle);
+  mainPlayBtn.addEventListener('click', toggle);
+  restartBtn.addEventListener('click', function(){
+    pause();
+    goTo(0, false);
+  });
+  prevBtn.addEventListener('click', function(){
+    var wasPlaying = playing;
+    if (wasPlaying) pause();
+    goTo(Math.max(0, current - 1), false);
+    if (wasPlaying) play();
+  });
+  nextBtn.addEventListener('click', function(){
+    var wasPlaying = playing;
+    if (wasPlaying) pause();
+    goTo(Math.min(scenes.length - 1, current + 1), false);
+    if (wasPlaying) play();
+  });
+
+  if (supportsSpeech) {
+    synth.onvoiceschanged = function(){};
+  }
+
+  showScene(0);
+})();
+</script>
+</body>
+</html>
